@@ -3,16 +3,15 @@ import datetime
 
 # multipart csv parser aaron and hugh
 class TrumbaParams(object):
-    __startdate = ""
-    __enddate = ""
-    __months = ""
-    __weeks = ""
-    __previousweeks = ""
-    __html = ""
-    __customnotes = ""
-
-   # def __init__(self, *args, **kwargs):
-   #     """ """
+    __params = {}
+    def __init__(self):
+        self.__params["enddate"] = ""
+        self.__params["startdate"] = ""
+        self.__params["months"] = ""
+        self.__params["weeks"] = ""
+        self.__params["previousweeks"] = ""
+        self.__params["html"] = ""
+        self.__params["customnotes"] = ""
 
     def parse_date(self, date_value):
         """ Trumba accepted date format is
@@ -44,13 +43,14 @@ class TrumbaParams(object):
 
     @property
     def query_string(self):
-        query_base = "?"
-        if self.__start_date != "":
-            query_base += start_date
+        query = "?"
+        for key, value in self.__params.items():
+            if value != "":
+                query += value
 
-        return param_string
+        return "" if query == "?" else query
 
-    
+
 class TrumbaConfig(object):
     base_url = "http://www.trumba.com/calendars/gazette.json"
 
@@ -61,13 +61,8 @@ class TrumbaClient(object):
         self.config = TrumbaConfig()
         self.params = TrumbaParams()
 
-    #@property
-    #def params(self):
-    #    return self.__params.params
-
     def get(self):
         response = requests.get(self.config.base_url)
-        import pdb; pdb.set_trace()
         return response
 
 tc = TrumbaClient()
