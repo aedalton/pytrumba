@@ -1,5 +1,7 @@
-import requests
 import datetime
+import json
+import requests
+
 
 # multipart csv parser aaron and hugh
 class TrumbaParams(object):
@@ -24,50 +26,50 @@ class TrumbaParams(object):
 
     @property
     def start_date(self):
-        return self.__startdate
+        return self.__params["startdate"]
 
     @start_date.setter
     def start_date(self, date_value):
         """ Parameter to filter on start date of events.
         If not specified, uses the current date."""
-        self.__startdate = "startdate={}".format(self.parse_date(date_value))
+        self.__params["startdate"] = self.parse_date(date_value)
 
     @property
     def end_date(self):
-        return self.__enddate
+        return self.__params["enddate"]
 
     @end_date.setter
     def end_date(self, date_value):
         """end date parameter; uses the same date format as for startdate"""
-        self.__enddate = "enddate={}".format(self.parse_date(date_value))
+        self.__params["enddate"] = self.parse_date(date_value)
 
     @property
     def query_string(self):
-        query = "?"
-        for key, value in self.__params.items():
-            if value != "":
-                query += value
-
-        return "" if query == "?" else query
+        return self.__params
 
 
 class TrumbaConfig(object):
     base_url = "http://www.trumba.com/calendars/gazette.json"
 
 
-
 class TrumbaClient(object):
-    def __init__(self):
+    def __init__(self, event_schema=None):
         self.config = TrumbaConfig()
         self.params = TrumbaParams()
+        self.event_schema = event_schema
 
     def get(self):
-        response = requests.get(self.config.base_url)
+        response = requests.get(self.config.base_url, params=self.params.query_string)
+        print(response.url)
         return response
 
-tc = TrumbaClient()
-        
-    
-    
-    
+    def get_parsed(self):
+        response = self.get()
+        return json.loads(response.text)
+
+    def get_parsed_event_schema(self):
+        """ marshmallow schema, WIP """
+        if event_schema:
+            return event_schema.loads(self.get_parsed())
+        return []
 
