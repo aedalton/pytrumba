@@ -67,9 +67,3 @@ class TrumbaClient(object):
         response = self.get()
         return json.loads(response.text)
 
-    def get_parsed_event_schema(self):
-        """ marshmallow schema, WIP """
-        if event_schema:
-            return event_schema.loads(self.get_parsed())
-        return []
-
