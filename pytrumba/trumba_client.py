@@ -1,9 +1,10 @@
 import datetime
 import json
+import ntpath
 import requests
+import shutil
 
 
-# multipart csv parser aaron and hugh
 class TrumbaParams(object):
     __params = {}
     def __init__(self):
@@ -53,10 +54,8 @@ class TrumbaConfig(object):
 
 
 class TrumbaClient(object):
-    def __init__(self, event_schema=None):
-        self.config = TrumbaConfig()
-        self.params = TrumbaParams()
-        self.event_schema = event_schema
+    config = TrumbaConfig()
+    params = TrumbaParams()
 
     def get(self):
         response = requests.get(self.config.base_url, params=self.params.query_string)
@@ -66,4 +65,3 @@ class TrumbaClient(object):
     def get_parsed(self):
         response = self.get()
         return json.loads(response.text)
-
